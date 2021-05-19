@@ -24,8 +24,7 @@ from tightb.tightb import Graphene
 
 class test_Graphene(unittest.TestCase):
     def test_periodic_inside_bounds(self):
-        dx, dy = 2, 4
-        lattice = Graphene(dx, dy)
+        lattice = Graphene(2, 4)
         start_position = np.array([0, 0])
         delta = np.array([1, 0])
 
@@ -34,8 +33,7 @@ class test_Graphene(unittest.TestCase):
         self.assertIsNone(assert_array_equal(end_position, np.array([1, 0])))
 
     def test_periodic_outside_bounds_in_x(self):
-        dx, dy = 2, 4
-        lattice = Graphene(dx, dy)
+        lattice = Graphene(2, 4)
         start_position = np.array([0, 0])
         delta = np.array([2, 0])
 
@@ -44,8 +42,7 @@ class test_Graphene(unittest.TestCase):
         self.assertIsNone(assert_array_equal(end_position, np.array([0, 0])))
 
     def test_periodic_outside_bounds_in_y(self):
-        dx, dy = 2, 4
-        lattice = Graphene(dx, dy)
+        lattice = Graphene(2, 4)
         start_position = np.array([0, 0])
         delta = np.array([0, 4])
 
@@ -54,8 +51,7 @@ class test_Graphene(unittest.TestCase):
         self.assertIsNone(assert_array_equal(end_position, np.array([0, 0])))
 
     def test_periodic_outside_bounds_in_x_y(self):
-        dx, dy = 2, 4
-        lattice = Graphene(dx, dy)
+        lattice = Graphene(2, 4)
         start_position = np.array([0, 0])
         delta = np.array([2, 4])
 
@@ -64,8 +60,7 @@ class test_Graphene(unittest.TestCase):
         self.assertIsNone(assert_array_equal(end_position, np.array([0, 0])))
 
     def test_periodic_with_orbitals_outside_bounds_in_x(self):
-        dx, dy = 2, 4
-        lattice = Graphene(dx, dy, orbitals=2)
+        lattice = Graphene(2, 4, orbitals=2)
         start_position = np.array([0, 0])
         delta = np.array([2, 0])
 
@@ -74,8 +69,7 @@ class test_Graphene(unittest.TestCase):
         self.assertIsNone(assert_array_equal(end_position, np.array([0, 0])))
 
     def test_periodic_with_orbitals_outside_bounds_in_y(self):
-        dx, dy = 2, 4
-        lattice = Graphene(dx, dy, orbitals=2)
+        lattice = Graphene(2, 4, orbitals=2)
         start_position = np.array([0, 0])
         delta = np.array([0, 4])
 
@@ -84,8 +78,7 @@ class test_Graphene(unittest.TestCase):
         self.assertIsNone(assert_array_equal(end_position, np.array([0, 0])))
 
     def test_periodic_with_orbitals_outside_bounds_in_x_y(self):
-        dx, dy = 2, 4
-        lattice = Graphene(dx, dy, orbitals=2)
+        lattice = Graphene(2, 4, orbitals=2)
         start_position = np.array([0, 0])
         delta = np.array([2, 4])
 
@@ -94,8 +87,7 @@ class test_Graphene(unittest.TestCase):
         self.assertIsNone(assert_array_equal(end_position, np.array([0, 0])))
 
     def test_convert_coodinates(self):
-        dx, dy = 2, 4
-        lattice = Graphene(dx, dy)
+        lattice = Graphene(2, 4)
 
         coordinate_in_grid_order = np.array([0, 0])
         coordinate_in_sequential_order = lattice.convert_coordinates(
@@ -116,8 +108,7 @@ class test_Graphene(unittest.TestCase):
         self.assertEqual(coordinate_in_sequential_order, 1)
 
     def test_convert_coodinates_with_orbitals(self):
-        dx, dy = 2, 4
-        lattice = Graphene(dx, dy, orbitals=2)
+        lattice = Graphene(2, 4, orbitals=2)
 
         coordinate_in_grid_order = np.array([0, 0])
         coordinate_in_sequential_order = lattice.convert_coordinates(
@@ -137,3 +128,18 @@ class test_Graphene(unittest.TestCase):
             coordinate_in_grid_order)
 
         self.assertEqual(coordinate_in_sequential_order, 1)
+
+    def test_is_removed(self):
+        lattice = Graphene(2, 4, sites_removed=[1, 2, 3, 4])
+        self.assertTrue(lattice.is_removed([1, 2]))
+        self.assertTrue(lattice.is_removed([2, 5]))
+        self.assertFalse(lattice.is_removed([5, 6]))
+
+    def test_check_removed(self):
+        lattice = Graphene(2, 4, sites_removed=[1, 2, 3, 4])
+
+        check = lattice.check_removed([1, 2], "foo")
+        self.assertEqual(check, "0.0")
+
+        check = lattice.check_removed([5, 6], "foo")
+        self.assertEqual(check, "foo")

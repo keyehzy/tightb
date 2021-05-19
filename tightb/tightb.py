@@ -19,25 +19,11 @@
 import numpy as np
 from tightb.writers import FortranWriter
 
+class GrapheneSites:
+    def __init__(self):
+        pass
 
-class Graphene:
-    def __init__(self,
-                 dx,
-                 dy,
-                 writer=None,
-                 orbitals=1,
-                 rashba_soc=False,
-                 external_mag=False,
-                 remove_sites=[]):
-        self.writer = writer
-        self.dx = dx
-        self.dy = dy
-        self.orbitals = orbitals
-        self.rashba_soc = rashba_soc
-        self.external_mag = external_mag
-        self.remove_sites = remove_sites
-
-    class SiteA:
+    class A:
         def __init__(self):
             pass
 
@@ -66,7 +52,7 @@ class Graphene:
                     "0.5 * rsoc * ( 1.0 - comp * sqrt(3.0))", "rsoc"
                 ]
 
-    class SiteB:
+    class B:
         def __init__(self):
             pass
 
@@ -95,7 +81,7 @@ class Graphene:
                     "0.5 * rsoc * (-1.0 + comp * sqrt(3.0))", "-rsoc"
                 ]
 
-    class SiteC:
+    class C:
         def __init__(self):
             pass
 
@@ -124,7 +110,7 @@ class Graphene:
                     "0.5 * rsoc * ( 1.0 - comp * sqrt(3.0))", "rsoc"
                 ]
 
-    class SiteD:
+    class D:
         def __init__(self):
             pass
 
@@ -153,6 +139,25 @@ class Graphene:
                     "0.5 * rsoc * (-1.0 + comp * sqrt(3.0))", "-rsoc"
                 ]
 
+
+class Graphene:
+    def __init__(self,
+                 dx,
+                 dy,
+                 writer=None,
+                 orbitals=1,
+                 rashba_soc=False,
+                 external_mag=False,
+                 sites_removed=[]):
+        self.dx = dx
+        self.dy = dy
+        self.writer = writer
+        self.orbitals = orbitals
+        self.rashba_soc = rashba_soc
+        self.external_mag = external_mag
+        self.sites_removed = convert_to_orbital(sites_removed, self.orbitals)
+        self.Site = GrapheneSites()
+
     def external_mag_mat(self, i, j) -> str:
         mat = [["j_ex * cos(theta)", "j_ex * sin(theta) * exp(-comp * phi)"],
                ["j_ex * sin(theta) * exp(comp * phi)", "-j_ex * cos(theta)"]]
@@ -168,7 +173,7 @@ class Graphene:
             0] * self.dy * self.orbitals + coordinate_in_grid[1]
 
     def is_removed(self, pair_coords: list) -> bool:
-        return any(coord in self.remove_sites for coord in pair_coords)
+        return any(coord in self.sites_removed for coord in pair_coords)
 
     def check_removed(self, pair_coords: list, result: str) -> str:
         return "0.0" if self.is_removed(pair_coords) else result
@@ -236,15 +241,8 @@ class Graphene:
     def normalize_site(self, coord: int) -> int:
         return int(np.ceil(coord // self.orbitals))
 
-    def convert_to_orbital(self, sites: list) -> list:
-        res = []
-        for site in sites:
-            for orb in range(self.orbitals):
-                res.append(self.orbitals * (site - 1) + 1 + orb)
-        return res
-
     def project_out_sites(self) -> None:
-        for site in self.remove_sites:
+        for site in self.sites_removed:
             self.writer.comment(f"Orbital {site}")
             self.writer.matrix_element("tij0", 0, site, site, result=1000000.0)
             self.writer.newline()
@@ -257,14 +255,21 @@ class Graphene:
                 site_kind = self.normalize_site(x0_coordinate) % 4
                 self.writer.comment(f"Orbital {x0_coordinate + 1}")
                 if site_kind == 0:
-                    print_matrix_component_fn(x0, x0_coordinate, self.SiteA)
+                    print_matrix_component_fn(x0, x0_coordinate, self.Site.A)
                 elif site_kind == 1:
-                    print_matrix_component_fn(x0, x0_coordinate, self.SiteB)
+                    print_matrix_component_fn(x0, x0_coordinate, self.Site.B)
                 elif site_kind == 2:
-                    print_matrix_component_fn(x0, x0_coordinate, self.SiteC)
+                    print_matrix_component_fn(x0, x0_coordinate, self.Site.C)
                 elif site_kind == 3:
-                    print_matrix_component_fn(x0, x0_coordinate, self.SiteD)
+                    print_matrix_component_fn(x0, x0_coordinate, self.Site.D)
                 self.writer.newline()
+
+def convert_to_orbital(sites: list, orbitals: int) -> list:
+    res = []
+    for site in sites:
+        for orb in range(orbitals):
+            res.append(orbitals * (site - 1) + 1 + orb)
+    return res
 
 
 def argument_scaffolding(args) -> None:
@@ -273,12 +278,15 @@ def argument_scaffolding(args) -> None:
 
     if (args.lattice == 'graphene'):
 
-        lattice = Graphene(args.dx, args.dy, args.orbitals, args.rashba_soc,
-                           args.external_mag, args.remove_sites, writer)
+        lattice = Graphene(dx=args.dx,
+                           dy=args.dy,
+                           orbitals=args.orbitals,
+                           rashba_soc=args.rashba_soc,
+                           external_mag=args.external_mag,
+                           sites_removed=args.remove_sites,
+                           writer=writer)
 
-        args.remove_sites = lattice.convert_to_orbital(args.remove_sites)
-
-        if len(args.remove_sites):
+        if args.remove_sites:
             writer.comment("Sites projected out")
             lattice.project_out_sites()
 
