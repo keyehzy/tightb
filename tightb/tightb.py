@@ -163,8 +163,9 @@ class Graphene:
                          (start_position[1] + self.orbitals * delta[1]) %
                          (self.orbitals * self.dy)])
 
-    def convert_coordinates(self, d: np.array) -> int:
-        return d[0] * self.dy * self.orbitals + d[1]
+    def convert_coordinates(self, coordinate_in_grid: np.array) -> int:
+        return coordinate_in_grid[
+            0] * self.dy * self.orbitals + coordinate_in_grid[1]
 
     def is_removed(self, pair_coords: list) -> bool:
         return any(coord in self.remove_sites for coord in pair_coords)
