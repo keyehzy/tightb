@@ -21,15 +21,21 @@ from tightb.writers import FortranWriter
 
 
 class Graphene:
-    def __init__(self, dx, dy, orbitals, rashba_soc, external_mag,
-                 remove_sites, writer):
+    def __init__(self,
+                 dx,
+                 dy,
+                 writer=None,
+                 orbitals=1,
+                 rashba_soc=False,
+                 external_mag=False,
+                 remove_sites=[]):
+        self.writer = writer
         self.dx = dx
         self.dy = dy
         self.orbitals = orbitals
         self.rashba_soc = rashba_soc
         self.external_mag = external_mag
         self.remove_sites = remove_sites
-        self.writer = writer
 
     class SiteA:
         def __init__(self):
@@ -38,9 +44,9 @@ class Graphene:
         @staticmethod
         def delta():
             return np.array([
-                [0, 1],  # up right
-                [-1, 1],  # down right
-                [0, -1],  # left
+                [0, 1],    # up right
+                [-1, 1],    # down right
+                [0, -1],    # left
             ])
 
         @staticmethod
@@ -49,7 +55,7 @@ class Graphene:
 
         @staticmethod
         def rashba(spin):
-            if spin:  # spin up
+            if spin:    # spin up
                 return [
                     "0.5 * rsoc * (-1.0 + comp * sqrt(3.0))",
                     "0.5 * rsoc * (-1.0 - comp * sqrt(3.0))", "-rsoc"
@@ -67,9 +73,9 @@ class Graphene:
         @staticmethod
         def delta():
             return np.array([
-                [0, -1],  # down left
-                [1, -1],  # up left
-                [0, 1],  # right
+                [0, -1],    # down left
+                [1, -1],    # up left
+                [0, 1],    # right
             ])
 
         @staticmethod
@@ -96,9 +102,9 @@ class Graphene:
         @staticmethod
         def delta():
             return np.array([
-                [1, 1],  # up right
-                [0, 1],  # down right
-                [0, -1],  # left
+                [1, 1],    # up right
+                [0, 1],    # down right
+                [0, -1],    # left
             ])
 
         @staticmethod
@@ -107,7 +113,7 @@ class Graphene:
 
         @staticmethod
         def rashba(spin):
-            if spin:  # spin up
+            if spin:    # spin up
                 return [
                     "0.5 * rsoc * (-1.0 + comp * sqrt(3.0))",
                     "0.5 * rsoc * (-1.0 - comp * sqrt(3.0))", "-rsoc"
@@ -125,9 +131,9 @@ class Graphene:
         @staticmethod
         def delta():
             return np.array([
-                [-1, -1],  # down left
-                [0, -1],  # up left
-                [0, 1],  # right
+                [-1, -1],    # down left
+                [0, -1],    # up left
+                [0, 1],    # right
             ])
 
         @staticmethod
@@ -152,11 +158,10 @@ class Graphene:
                ["j_ex * sin(theta) * exp(comp * phi)", "-j_ex * cos(theta)"]]
         return mat[i][j]
 
-    def periodic(self, x0: np.array, d: np.array) -> np.array:
-        return np.array([
-            (x0[0] + d[0]) % self.dx,
-            (x0[1] + self.orbitals * d[1]) % (self.orbitals * self.dy)
-        ])
+    def periodic(self, start_position: np.array, delta: np.array) -> np.array:
+        return np.array([(start_position[0] + delta[0]) % self.dx,
+                         (start_position[1] + self.orbitals * delta[1]) %
+                         (self.orbitals * self.dy)])
 
     def convert_coordinates(self, d: np.array) -> int:
         return d[0] * self.dy * self.orbitals + d[1]
