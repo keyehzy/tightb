@@ -126,3 +126,77 @@ class reflect_point_by_tilted_axis(unittest.TestCase):
             assert_allclose(
                 tightb.symmetry.reflect_point_by_tilted_axis(point, n, axis),
                 np.array([1.0, 3.0])))    # Equal up to 1e-16
+
+
+class reflect_lattice(unittest.TestCase):
+    def test_vertical_all_on_x_axis(self):
+        lattice = [
+            np.array([1.0, 0.0]),
+            np.array([2.0, 0.0]),
+            np.array([3.0, 0.0]),
+            np.array([4.0, 0.0])
+        ]
+
+        self.assertIsNone(
+            assert_allclose(
+                tightb.symmetry.reflect_lattice_by_vertical_axis(lattice, 0.0),
+                [
+                    np.array([-1.0, 0.0]),
+                    np.array([-2.0, 0.0]),
+                    np.array([-3.0, 0.0]),
+                    np.array([-4.0, 0.0])
+                ]))    # Equal up to 1e-16
+
+    def test_vertical_all_on_y_axis(self):
+        lattice = [
+            np.array([0.0, 1.0]),
+            np.array([0.0, 2.0]),
+            np.array([0.0, 3.0]),
+            np.array([0.0, 4.0])
+        ]
+
+        self.assertIsNone(
+            assert_allclose(
+                tightb.symmetry.reflect_lattice_by_vertical_axis(lattice, 0.0),
+                [
+                    np.array([0.0, 1.0]),
+                    np.array([0.0, 2.0]),
+                    np.array([0.0, 3.0]),
+                    np.array([0.0, 4.0])
+                ]))    # Equal up to 1e-16
+
+    def test_horizontal_all_on_x_axis(self):
+        lattice = [
+            np.array([1.0, 0.0]),
+            np.array([2.0, 0.0]),
+            np.array([3.0, 0.0]),
+            np.array([4.0, 0.0])
+        ]
+
+        self.assertIsNone(
+            assert_allclose(
+                tightb.symmetry.reflect_lattice_by_horizontal_axis(
+                    lattice, 0.0), [
+                        np.array([1.0, 0.0]),
+                        np.array([2.0, 0.0]),
+                        np.array([3.0, 0.0]),
+                        np.array([4.0, 0.0])
+                    ]))    # Equal up to 1e-16
+
+    def test_horizontal_all_on_y_axis(self):
+        lattice = [
+            np.array([0.0, 1.0]),
+            np.array([0.0, 2.0]),
+            np.array([0.0, 3.0]),
+            np.array([0.0, 4.0])
+        ]
+
+        self.assertIsNone(
+            assert_allclose(
+                tightb.symmetry.reflect_lattice_by_horizontal_axis(
+                    lattice, 0.0), [
+                        np.array([0.0, -1.0]),
+                        np.array([0.0, -2.0]),
+                        np.array([0.0, -3.0]),
+                        np.array([0.0, -4.0])
+                    ]))    # Equal up to 1e-16
