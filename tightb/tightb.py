@@ -19,25 +19,80 @@
 import numpy as np
 from tightb.writers import FortranWriter
 
+
+class SquareSites:
+    def __init__(self):
+        pass
+
+    class A:
+        delta = np.array([
+            [1, 0],    # up
+            [-1, 0],    # down
+            [0, 1],    # right
+            [0, -1],    # left
+        ])
+
+        direction = [1, -1, 2, -2]
+
+        def __init__(self):
+            pass
+
+        @staticmethod
+        def rashba(spin):
+            if spin:    # spin up
+                return [    # TODO(keyehz): calculate this
+                    "", "", "", ""
+                ]
+            else:
+                return [    # TODO(keyehz): calculate this
+                    "", "", "", ""
+                ]
+
+
+class TriangularSites:
+    def __init__(self):
+        pass
+
+    class A:
+        delta = np.array([    # TODO(keyehzh)
+            [0, 1],    # up
+            [0, -1],    # down
+            [1, 0],    # right
+            [-1, 0],    # left
+        ])
+
+        direction = [1, -1, 2, -2]
+
+        def __init__(self):
+            pass
+
+        @staticmethod
+        def rashba(spin):
+            if spin:    # spin up
+                return [    # TODO(keyehz): calculate this
+                    "", "", "", ""
+                ]
+            else:
+                return [    # TODO(keyehz): calculate this
+                    "", "", "", ""
+                ]
+
+
 class GrapheneSites:
     def __init__(self):
         pass
 
     class A:
+        delta = np.array([
+            [0, 1],    # up right
+            [-1, 1],    # down right
+            [0, -1],    # left
+        ])
+
+        direction = [1, 2, 3]
+
         def __init__(self):
             pass
-
-        @staticmethod
-        def delta():
-            return np.array([
-                [0, 1],    # up right
-                [-1, 1],    # down right
-                [0, -1],    # left
-            ])
-
-        @staticmethod
-        def direction():
-            return [1, 2, 3]
 
         @staticmethod
         def rashba(spin):
@@ -53,20 +108,16 @@ class GrapheneSites:
                 ]
 
     class B:
+        delta = np.array([
+            [0, -1],    # down left
+            [1, -1],    # up left
+            [0, 1],    # right
+        ])
+
+        direction = [-1, -2, -3]
+
         def __init__(self):
             pass
-
-        @staticmethod
-        def delta():
-            return np.array([
-                [0, -1],    # down left
-                [1, -1],    # up left
-                [0, 1],    # right
-            ])
-
-        @staticmethod
-        def direction():
-            return [-1, -2, -3]
 
         @staticmethod
         def rashba(spin):
@@ -82,20 +133,16 @@ class GrapheneSites:
                 ]
 
     class C:
+        delta = np.array([
+            [1, 1],    # up right
+            [0, 1],    # down right
+            [0, -1],    # left
+        ])
+
+        direction = [1, 2, 3]
+
         def __init__(self):
             pass
-
-        @staticmethod
-        def delta():
-            return np.array([
-                [1, 1],    # up right
-                [0, 1],    # down right
-                [0, -1],    # left
-            ])
-
-        @staticmethod
-        def direction():
-            return [1, 2, 3]
 
         @staticmethod
         def rashba(spin):
@@ -111,20 +158,16 @@ class GrapheneSites:
                 ]
 
     class D:
+        delta = np.array([
+            [-1, -1],    # down left
+            [0, -1],    # up left
+            [0, 1],    # right
+        ])
+
+        direction = [-1, -2, -3]
+
         def __init__(self):
             pass
-
-        @staticmethod
-        def delta():
-            return np.array([
-                [-1, -1],    # down left
-                [0, -1],    # up left
-                [0, 1],    # right
-            ])
-
-        @staticmethod
-        def direction():
-            return [-1, -2, -3]
 
         @staticmethod
         def rashba(spin):
@@ -155,13 +198,8 @@ class Graphene:
         self.orbitals = orbitals
         self.rashba_soc = rashba_soc
         self.external_mag = external_mag
-        self.sites_removed = convert_to_orbital(sites_removed, self.orbitals)
+        self.sites_removed = self.convert_to_orbital(sites_removed)
         self.Site = GrapheneSites()
-
-    def external_mag_mat(self, i, j) -> str:
-        mat = [["j_ex * cos(theta)", "j_ex * sin(theta) * exp(-comp * phi)"],
-               ["j_ex * sin(theta) * exp(comp * phi)", "-j_ex * cos(theta)"]]
-        return mat[i][j]
 
     def periodic(self, start_position: np.array, delta: np.array) -> np.array:
         return np.array([(start_position[0] + delta[0]) % self.dx,
@@ -179,7 +217,7 @@ class Graphene:
         return "0.0" if self.is_removed(pair_coords) else result
 
     def print_matrix_component_spinless(self, x0, x0_coordinate, Site) -> None:
-        for delta, direction in zip(Site.delta(), Site.direction()):
+        for delta, direction in zip(Site.delta, Site.direction):
             x = self.periodic(x0, delta)
             x_coordinate = self.convert_coordinates(x)
 
@@ -193,7 +231,7 @@ class Graphene:
     def print_matrix_component_rashba(self, x0, x0_coordinate, Site) -> None:
         spin = x0_coordinate % 2 == 0
 
-        for delta, direction, rashba in zip(Site.delta(), Site.direction(),
+        for delta, direction, rashba in zip(Site.delta, Site.direction,
                                             Site.rashba(spin)):
             x = self.periodic(x0, delta)
             x_coordinate = self.convert_coordinates(x)
@@ -219,27 +257,30 @@ class Graphene:
         pair_coords = [x0_coordinate + 1, x0_coordinate + 1]
 
         if spin:
-            result = self.check_removed(pair_coords,
-                                        self.external_mag_mat(0, 0))
+            result = self.check_removed(pair_coords, external_mag_mat(0, 0))
         else:
-            result = self.check_removed(pair_coords,
-                                        self.external_mag_mat(1, 1))
+            result = self.check_removed(pair_coords, external_mag_mat(1, 1))
 
         self.writer.matrix_element("tij3", 0, *pair_coords, result=result)
 
         if spin:
             pair_coords = [x0_coordinate + 1, x0_coordinate + 2]
-            result = self.check_removed(pair_coords,
-                                        self.external_mag_mat(0, 1))
+            result = self.check_removed(pair_coords, external_mag_mat(0, 1))
         else:
             pair_coords = [x0_coordinate + 1, x0_coordinate]
-            result = self.check_removed(pair_coords,
-                                        self.external_mag_mat(1, 0))
+            result = self.check_removed(pair_coords, external_mag_mat(1, 0))
 
         self.writer.matrix_element("tij3", 0, *pair_coords, result=result)
 
     def normalize_site(self, coord: int) -> int:
         return int(np.ceil(coord // self.orbitals))
+
+    def convert_to_orbital(self, sites: list) -> list:
+        res = []
+        for site in sites:
+            for orb in range(self.orbitals):
+                res.append(self.orbitals * (site - 1) + 1 + orb)
+        return res
 
     def project_out_sites(self) -> None:
         for site in self.sites_removed:
@@ -264,12 +305,11 @@ class Graphene:
                     print_matrix_component_fn(x0, x0_coordinate, self.Site.D)
                 self.writer.newline()
 
-def convert_to_orbital(sites: list, orbitals: int) -> list:
-    res = []
-    for site in sites:
-        for orb in range(orbitals):
-            res.append(orbitals * (site - 1) + 1 + orb)
-    return res
+
+def external_mag_mat(i, j) -> str:
+    mat = [["j_ex * cos(theta)", "j_ex * sin(theta) * exp(-comp * phi)"],
+           ["j_ex * sin(theta) * exp(comp * phi)", "-j_ex * cos(theta)"]]
+    return mat[i][j]
 
 
 def argument_scaffolding(args) -> None:
