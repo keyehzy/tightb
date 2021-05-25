@@ -18,7 +18,7 @@
 
 import unittest
 import numpy as np
-from numpy.testing import assert_array_equal
+from numpy.testing import assert_array_equal, assert_allclose
 import tightb.symmetry
 
 
@@ -80,3 +80,49 @@ class reflect_point_by_horizontal_axis(unittest.TestCase):
             assert_array_equal(
                 tightb.symmetry.reflect_point_by_horizontal_axis(
                     point, x_axis), np.array([1.0, 0.0])))
+
+
+class reflect_point_by_tilted_axis(unittest.TestCase):
+    def test_trivial(self):
+        point = np.array([1.0, 1.0])
+        n = np.array([0.0, 1.0])
+        self.assertIsNone(
+            assert_array_equal(
+                tightb.symmetry.reflect_point_by_tilted_axis(point, n),
+                np.array([-1.0, 1.0])))
+
+    def test_tilted(self):
+        point = np.array([1.0, 3.0])
+        n = np.array([1.0, 1.0])    # 45 deg
+        self.assertIsNone(
+            assert_allclose(
+                tightb.symmetry.reflect_point_by_tilted_axis(point, n),
+                np.array([3.0, 1.0])))    # Equal up to 1e-16
+
+    def test_tilted_translation_y(self):
+        point = np.array([3.0, 1.0])
+        n = np.array([1.0, 1.0])    # 45 deg
+        axis = [1.0, 0.0]
+        self.assertIsNone(
+            assert_allclose(
+                tightb.symmetry.reflect_point_by_tilted_axis(point, n, axis),
+                np.array([2.0, 2.0])))    # Equal up to 1e-16
+
+    def test_tilted_translation_x(self):
+        point = np.array([3.0, 1.0])
+        n = np.array([1.0, 1.0])    # 45 deg
+        axis = [0.0, 1.0]
+        self.assertIsNone(
+            assert_allclose(tightb.symmetry.reflect_point_by_tilted_axis(
+                point, n, axis),
+                            np.array([0.0, 4.0]),
+                            atol=1e-15))    # Equal up to 1e-15
+
+    def test_tilted_translation_xy(self):
+        point = np.array([3.0, 1.0])
+        n = np.array([1.0, 1.0])    # 45 deg
+        axis = [1.0, 1.0]
+        self.assertIsNone(
+            assert_allclose(
+                tightb.symmetry.reflect_point_by_tilted_axis(point, n, axis),
+                np.array([1.0, 3.0])))    # Equal up to 1e-16

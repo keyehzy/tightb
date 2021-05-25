@@ -50,3 +50,34 @@ def reflect_point_by_vertical_axis(x0: np.array, x_star: float):
 
 def reflect_point_by_horizontal_axis(x0: np.array, y_star: float):
     return np.array([x0[0], y_star - x0[1]])
+
+
+# Now the more complicated cases where the axis is tilted by some angle alpha
+def reflect_point_by_tilted_axis(x0: np.array,
+                                 v: np.array,
+                                 r_star: list = [0.0, 0.0]):
+    # Here we are using the parametric form of the line function
+    #
+    # x = x0 + v_x * t
+    # y = x0 + v_y * t
+    #
+    # v is the unit vector in the direction of the tilted axis
+    v = v / np.sqrt(v @ v)
+
+    # alpha is the angle between the tilted axis and the y axis
+    yhat = np.array([0.0, 1.0])
+    alpha = np.arccos(yhat @ v)
+
+    x0_rot = np.array([(x0[0] - r_star[0]) * np.cos(alpha) -
+                       (x0[1] - r_star[1]) * np.sin(alpha),
+                       (x0[0] - r_star[0]) * np.sin(alpha) +
+                       (x0[1] - r_star[1]) * np.cos(alpha)])
+
+    # Reflect
+    x0_ref = np.array([-x0_rot[0], x0_rot[1]])
+
+    # Then rotate and translate back
+    return np.array([
+        r_star[0] + x0_ref[0] * np.cos(alpha) + x0_ref[1] * np.sin(alpha),
+        r_star[1] - x0_ref[0] * np.sin(alpha) + x0_ref[1] * np.cos(alpha)
+    ])
