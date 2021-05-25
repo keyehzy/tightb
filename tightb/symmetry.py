@@ -25,7 +25,7 @@ unitcell_sequence = np.array(
     [graphene_delta[0], -graphene_delta[2], graphene_delta[1]])
 
 
-def graphene_lattice_real_coordinates(nx: int, ny: int):
+def graphene_lattice_real_coordinates(nx: int, ny: int) -> list:
     coordinates = []
     for j in range(ny):
         x0 = np.array([0.0, j * np.sqrt(3.0)])
@@ -44,18 +44,18 @@ def graphene_lattice_real_coordinates(nx: int, ny: int):
 
 
 # Lets handle only the cases parallel to x or y axis
-def reflect_point_by_vertical_axis(x0: np.array, x_star: float):
+def reflect_point_by_vertical_axis(x0: np.array, x_star: float) -> np.array:
     return np.array([x_star - x0[0], x0[1]])
 
 
-def reflect_point_by_horizontal_axis(x0: np.array, y_star: float):
+def reflect_point_by_horizontal_axis(x0: np.array, y_star: float) -> np.array:
     return np.array([x0[0], y_star - x0[1]])
 
 
 # Now the more complicated cases where the axis is tilted by some angle alpha
 def reflect_point_by_tilted_axis(x0: np.array,
                                  v: np.array,
-                                 r_star: list = [0.0, 0.0]):
+                                 r_star: list = [0.0, 0.0]) -> np.array:
     # Here we are using the parametric form of the line function
     #
     # x = x0 + v_x * t
@@ -83,14 +83,14 @@ def reflect_point_by_tilted_axis(x0: np.array,
     ])
 
 
-def reflect_lattice_by_vertical_axis(lattice: list, x_star):
+def reflect_lattice_by_vertical_axis(lattice: list, x_star) -> list:
     reflected_lattice = []
     for site in lattice:
         reflected_lattice.append(reflect_point_by_vertical_axis(site, x_star))
     return reflected_lattice
 
 
-def reflect_lattice_by_horizontal_axis(lattice: list, y_star):
+def reflect_lattice_by_horizontal_axis(lattice: list, y_star) -> list:
     reflected_lattice = []
     for site in lattice:
         reflected_lattice.append(reflect_point_by_horizontal_axis(
@@ -98,26 +98,29 @@ def reflect_lattice_by_horizontal_axis(lattice: list, y_star):
     return reflected_lattice
 
 
-def reflect_lattice_by_axis(lattice: list, v: np.array, r_star: list):
+def reflect_lattice_by_axis(lattice: list, v: np.array, r_star: list) -> list:
     reflected_lattice = []
     for site in lattice:
         reflected_lattice.append(reflect_point_by_tilted_axis(site, v, r_star))
     return reflected_lattice
 
 
-def reflected_lattice_by_vertical_axis(nx: int, ny: int, x_star: float):
+def reflected_lattice_by_vertical_axis(nx: int, ny: int,
+                                       x_star: float) -> list:
     lattice = graphene_lattice_real_coordinates(
         nx, ny)    # TODO(keyeh): include removed sites
     return reflect_lattice_by_vertical_axis(lattice, x_star)
 
 
-def reflected_lattice_by_horizontal_axis(nx: int, ny: int, y_star: float):
+def reflected_lattice_by_horizontal_axis(nx: int, ny: int,
+                                         y_star: float) -> list:
     lattice = graphene_lattice_real_coordinates(
         nx, ny)    # TODO(keyeh): include removed sites
     return reflect_lattice_by_horizontal_axis(lattice, y_star)
 
 
-def reflected_lattice_by_axis(nx: int, ny: int, v: np.array, r_star: list):
+def reflected_lattice_by_axis(nx: int, ny: int, v: np.array,
+                              r_star: list) -> list:
     lattice = graphene_lattice_real_coordinates(
         nx, ny)    # TODO(keyeh): include removed sites
     return reflect_lattice_by_axis(lattice, v, r_star)
@@ -127,5 +130,5 @@ class Lattice:
     def __init__(self, coordinates):
         self.coordinates = coordinates
 
-    def reflect_by_axis(self, v: np.array, r_star: list):
+    def reflect_by_axis(self, v: np.array, r_star: list) -> list:
         return reflected_lattice_by_axis(self.coordinates, v, r_star)
