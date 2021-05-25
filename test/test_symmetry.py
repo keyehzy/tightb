@@ -44,3 +44,39 @@ class graphene_lattice_real_coordinates(unittest.TestCase):
                           [2.0, 1.7320508075688774], [3.0, 1.7320508075688774],
                           [3.5, 2.598076211353316], [4.5, 2.598076211353316],
                           [5.0, 1.7320508075688774]])))
+
+
+class reflect_point_by_vertical_axis(unittest.TestCase):
+    def test_trivial(self):
+        point = np.array([1.0, 1.0])
+        y_axis = 0.0
+        self.assertIsNone(
+            assert_array_equal(
+                tightb.symmetry.reflect_point_by_vertical_axis(point, y_axis),
+                np.array([-1.0, 1.0])))
+
+    def test_offaxis(self):
+        point = np.array([1.0, 1.0])
+        y_axis = 1.0
+        self.assertIsNone(
+            assert_array_equal(
+                tightb.symmetry.reflect_point_by_vertical_axis(point, y_axis),
+                np.array([0.0, 1.0])))
+
+
+class reflect_point_by_horizontal_axis(unittest.TestCase):
+    def test_trivial(self):
+        point = np.array([1.0, 1.0])
+        x_axis = 0.0
+        self.assertIsNone(
+            assert_array_equal(
+                tightb.symmetry.reflect_point_by_horizontal_axis(
+                    point, x_axis), np.array([1.0, -1.0])))
+
+    def test_offaxis(self):
+        point = np.array([1.0, 1.0])
+        x_axis = 1.0
+        self.assertIsNone(
+            assert_array_equal(
+                tightb.symmetry.reflect_point_by_horizontal_axis(
+                    point, x_axis), np.array([1.0, 0.0])))

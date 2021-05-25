@@ -41,3 +41,12 @@ def graphene_lattice_real_coordinates(nx: int, ny: int):
             x0 -= graphene_delta[2]
 
     return coordinates
+
+
+# Lets handle only the cases parallel to x or y axis
+def reflect_point_by_vertical_axis(x0: np.array, x_star: float):
+    return np.array([x_star - x0[0], x0[1]])
+
+
+def reflect_point_by_horizontal_axis(x0: np.array, y_star: float):
+    return np.array([x0[0], y_star - x0[1]])
