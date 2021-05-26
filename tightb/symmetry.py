@@ -25,7 +25,8 @@ unitcell_sequence = np.array(
     [graphene_delta[0], -graphene_delta[2], graphene_delta[1]])
 
 
-def graphene_lattice_real_coordinates(nx: int, ny: int) -> list:
+def graphene_lattice_real_coordinates(
+        nx: int, ny: int) -> list:    # TODO(keyeh): include removed sites
     coordinates = []
     for j in range(ny):
         x0 = np.array([0.0, j * np.sqrt(3.0)])
@@ -40,7 +41,7 @@ def graphene_lattice_real_coordinates(nx: int, ny: int) -> list:
 
             x0 -= graphene_delta[2]
 
-    return coordinates
+    return sorted(np.round(coordinates, 9), key=lambda x: (x[0], x[1]))
 
 
 # Lets handle only the cases parallel to x or y axis
@@ -105,30 +106,13 @@ def reflect_lattice_by_axis(lattice: list, v: np.array, r_star: list) -> list:
     return reflected_lattice
 
 
-def reflected_lattice_by_vertical_axis(nx: int, ny: int,
-                                       x_star: float) -> list:
-    lattice = graphene_lattice_real_coordinates(
-        nx, ny)    # TODO(keyeh): include removed sites
-    return reflect_lattice_by_vertical_axis(lattice, x_star)
-
-
-def reflected_lattice_by_horizontal_axis(nx: int, ny: int,
-                                         y_star: float) -> list:
-    lattice = graphene_lattice_real_coordinates(
-        nx, ny)    # TODO(keyeh): include removed sites
-    return reflect_lattice_by_horizontal_axis(lattice, y_star)
-
-
-def reflected_lattice_by_axis(nx: int, ny: int, v: np.array,
-                              r_star: list) -> list:
-    lattice = graphene_lattice_real_coordinates(
-        nx, ny)    # TODO(keyeh): include removed sites
-    return reflect_lattice_by_axis(lattice, v, r_star)
+def is_symmetric_by_reflection(lattice, v: np.array, r_star: list) -> bool:
+    reflected_lattice = sorted(np.round(
+        reflect_lattice_by_axis(lattice, v, r_star), 9),
+                               key=lambda x: (x[0], x[1]))    # HACK(keyehz)
+    return np.allclose(lattice, reflected_lattice)
 
 
 class Lattice:
     def __init__(self, coordinates):
         self.coordinates = coordinates
-
-    def reflect_by_axis(self, v: np.array, r_star: list) -> list:
-        return reflected_lattice_by_axis(self.coordinates, v, r_star)
