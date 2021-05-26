@@ -350,6 +350,20 @@ class reflection_vertical_axis(unittest.TestCase):
                                 lattice, boundary),
                         [[0.0, 0.0]]))    # Equal up to 1e-16
 
+    def test_centered_symmetric_float(self):
+        lattice = [
+                np.array([-2.123456789, 0.0]),
+                np.array([-1.456789123, 0.0]),
+                np.array([1.456789123, 0.0]),
+                np.array([2.123456789, 0.0])
+        ]
+        boundary = tightb.symmetry.Boundary(xmin=-3.0, xmax=3.0)
+        self.assertIsNone(
+                assert_allclose(
+                        tightb.symmetry.reflection_vertical_axis(
+                                lattice, boundary),
+                        [[0.0, 0.0]]))    # Equal up to 1e-16
+
     def test_centered_assymetric(self):
         lattice = [
                 np.array([-2.0, 0.0]),
@@ -360,4 +374,70 @@ class reflection_vertical_axis(unittest.TestCase):
         boundary = tightb.symmetry.Boundary(xmin=-3.0, xmax=3.0)
         self.assertFalse(
                 tightb.symmetry.reflection_vertical_axis(
+                        lattice, boundary))    # Is empty
+
+    def test_centered_assymetric_float(self):
+        lattice = [
+                np.array([-2.123456789, 0.0]),
+                np.array([-1.567891234, 0.0]),
+                np.array([1.0, 0.0]),
+                np.array([2.567891234, 0.0])
+        ]
+        boundary = tightb.symmetry.Boundary(xmin=-3.0, xmax=3.0)
+        self.assertFalse(
+                tightb.symmetry.reflection_vertical_axis(
+                        lattice, boundary))    # Is empty
+
+
+class reflection_horizontal_axis(unittest.TestCase):
+    def test_centered_symmetric(self):
+        lattice = [
+                np.array([0.0, -2.0]),
+                np.array([0.0, -1.0]),
+                np.array([0.0, 1.0]),
+                np.array([0.0, 2.0])
+        ]
+        boundary = tightb.symmetry.Boundary(ymin=-3.0, ymax=3.0)
+        self.assertIsNone(
+                assert_allclose(
+                        tightb.symmetry.reflection_horizontal_axis(
+                                lattice, boundary),
+                        [[0.0, 0.0]]))    # Equal up to 1e-16
+
+    def test_centered_symmetric_float(self):
+        lattice = [
+                np.array([0.0, -2.123456789]),
+                np.array([0.0, -1.456789123]),
+                np.array([0.0, 1.456789123]),
+                np.array([0.0, 2.123456789])
+        ]
+        boundary = tightb.symmetry.Boundary(ymin=-3.0, ymax=3.0)
+        self.assertIsNone(
+                assert_allclose(
+                        tightb.symmetry.reflection_horizontal_axis(
+                                lattice, boundary),
+                        [[0.0, 0.0]]))    # Equal up to 1e-16
+
+    def test_centered_assymetric(self):
+        lattice = [
+                np.array([0.0, -2.0]),
+                np.array([0.0, -1.5]),
+                np.array([0.0, 1.0]),
+                np.array([0.0, 2.5])
+        ]
+        boundary = tightb.symmetry.Boundary(ymin=-3.0, ymax=3.0)
+        self.assertFalse(
+                tightb.symmetry.reflection_horizontal_axis(
+                        lattice, boundary))    # Is empty
+
+    def test_centered_assymetric_float(self):
+        lattice = [
+                np.array([0.0, -2.123456789]),
+                np.array([0.0, -1.567891234]),
+                np.array([0.0, 1.0]),
+                np.array([0.0, 2.567891234])
+        ]
+        boundary = tightb.symmetry.Boundary(ymin=-3.0, ymax=3.0)
+        self.assertFalse(
+                tightb.symmetry.reflection_horizontal_axis(
                         lattice, boundary))    # Is empty

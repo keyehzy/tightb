@@ -161,6 +161,23 @@ def reflection_vertical_axis(lattice: list, boundary: Boundary) -> list:
     return reflection_axes
 
 
+def reflection_horizontal_axis(lattice: list, boundary: Boundary) -> list:
+
+    N = 1000    # TODO(keyezh): hardcoded, not sure if good enough
+    dx = (boundary.ymax - boundary.ymin) / float(N)
+
+    reflection_axes = []
+    axis_direction = np.array([1.0, 0.0])    # parallel to x axis
+
+    for j in range(N):
+        r = np.array([0.0, j * dx])
+
+        if is_symmetric_by_reflection(lattice, axis_direction, r):
+            reflection_axes.append(r)
+
+    return reflection_axes
+
+
 class Lattice:
     def __init__(self, coordinates):
         self.coordinates = coordinates
