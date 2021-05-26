@@ -91,19 +91,19 @@ class test_Graphene(unittest.TestCase):
 
         coordinate_in_grid_order = np.array([0, 0])
         coordinate_in_sequential_order = lattice.convert_coordinates(
-            coordinate_in_grid_order)
+                coordinate_in_grid_order)
 
         self.assertEqual(coordinate_in_sequential_order, 0)
 
         coordinate_in_grid_order = np.array([1, 0])
         coordinate_in_sequential_order = lattice.convert_coordinates(
-            coordinate_in_grid_order)
+                coordinate_in_grid_order)
 
         self.assertEqual(coordinate_in_sequential_order, lattice.dy)
 
         coordinate_in_grid_order = np.array([0, 1])
         coordinate_in_sequential_order = lattice.convert_coordinates(
-            coordinate_in_grid_order)
+                coordinate_in_grid_order)
 
         self.assertEqual(coordinate_in_sequential_order, 1)
 
@@ -112,20 +112,20 @@ class test_Graphene(unittest.TestCase):
 
         coordinate_in_grid_order = np.array([0, 0])
         coordinate_in_sequential_order = lattice.convert_coordinates(
-            coordinate_in_grid_order)
+                coordinate_in_grid_order)
 
         self.assertEqual(coordinate_in_sequential_order, 0)
 
         coordinate_in_grid_order = np.array([1, 0])
         coordinate_in_sequential_order = lattice.convert_coordinates(
-            coordinate_in_grid_order)
+                coordinate_in_grid_order)
 
         self.assertEqual(coordinate_in_sequential_order,
                          lattice.orbitals * lattice.dy)
 
         coordinate_in_grid_order = np.array([0, 1])
         coordinate_in_sequential_order = lattice.convert_coordinates(
-            coordinate_in_grid_order)
+                coordinate_in_grid_order)
 
         self.assertEqual(coordinate_in_sequential_order, 1)
 

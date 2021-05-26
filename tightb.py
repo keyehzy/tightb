@@ -17,9 +17,7 @@
 # along with tightb.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys
-
-sys.path.append('.')
-
 from tightb import cli
 
+sys.path.append('.')
 cli.scaffolding()

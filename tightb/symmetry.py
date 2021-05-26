@@ -22,7 +22,7 @@ graphene_delta = np.array([[0.5, 0.5 * np.sqrt(3.0)],
                            [0.5, -0.5 * np.sqrt(3.0)], [-1.0, 0.0]])
 
 unitcell_sequence = np.array(
-    [graphene_delta[0], -graphene_delta[2], graphene_delta[1]])
+        [graphene_delta[0], -graphene_delta[2], graphene_delta[1]])
 
 
 def graphene_lattice_real_coordinates(
@@ -80,10 +80,11 @@ class Boundary:
 
 
 # Now the more complicated cases where the axis is tilted by some angle alpha
-def reflect_point_by_tilted_axis(x0: np.array,
-                                 v: np.array,
-                                 r_star: list = [0.0, 0.0],
-                                 boundary: Boundary = Boundary()) -> np.array:
+def reflect_point_by_tilted_axis(
+        x0: np.array,
+        v: np.array,
+        r_star: list = [0.0, 0.0],
+        boundary: Boundary = Boundary()) -> np.array:
     # Here we are using the parametric form of the line function
     #
     # x = x0 + v_x * t
@@ -106,10 +107,11 @@ def reflect_point_by_tilted_axis(x0: np.array,
 
     # Then rotate and translate back
     return boundary.apply_boundary(
-        np.array([
-            r_star[0] + x0_ref[0] * np.cos(alpha) + x0_ref[1] * np.sin(alpha),
-            r_star[1] - x0_ref[0] * np.sin(alpha) + x0_ref[1] * np.cos(alpha)
-        ]))
+            np.array([
+                    r_star[0] + x0_ref[0] * np.cos(alpha) +
+                    x0_ref[1] * np.sin(alpha), r_star[1] -
+                    x0_ref[0] * np.sin(alpha) + x0_ref[1] * np.cos(alpha)
+            ]))
 
 
 def reflect_lattice_by_vertical_axis(lattice: list, x_star) -> list:
@@ -123,7 +125,7 @@ def reflect_lattice_by_horizontal_axis(lattice: list, y_star) -> list:
     reflected_lattice = []
     for site in lattice:
         reflected_lattice.append(reflect_point_by_horizontal_axis(
-            site, y_star))
+                site, y_star))
     return reflected_lattice
 
 
@@ -136,7 +138,7 @@ def reflect_lattice_by_axis(lattice: list, v: np.array, r_star: list) -> list:
 
 def is_symmetric_by_reflection(lattice, v: np.array, r_star: list) -> bool:
     reflected_lattice = sorted(np.round(
-        reflect_lattice_by_axis(lattice, v, r_star), 9),
+            reflect_lattice_by_axis(lattice, v, r_star), 9),
                                key=lambda x: (x[0], x[1]))    # HACK(keyehz)
     return np.allclose(lattice, reflected_lattice)
 

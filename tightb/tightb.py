@@ -26,10 +26,10 @@ class SquareSites:
 
     class A:
         delta = np.array([
-            [1, 0],    # up
-            [-1, 0],    # down
-            [0, 1],    # right
-            [0, -1],    # left
+                [1, 0],    # up
+                [-1, 0],    # down
+                [0, 1],    # right
+                [0, -1],    # left
         ])
 
         direction = [1, -1, 2, -2]
@@ -41,11 +41,11 @@ class SquareSites:
         def rashba(spin):
             if spin:    # spin up
                 return [    # TODO(keyehz): calculate this
-                    "", "", "", ""
+                        "", "", "", ""
                 ]
             else:
                 return [    # TODO(keyehz): calculate this
-                    "", "", "", ""
+                        "", "", "", ""
                 ]
 
 
@@ -55,10 +55,10 @@ class TriangularSites:
 
     class A:
         delta = np.array([    # TODO(keyehzh)
-            [0, 1],    # up
-            [0, -1],    # down
-            [1, 0],    # right
-            [-1, 0],    # left
+                [0, 1],    # up
+                [0, -1],    # down
+                [1, 0],    # right
+                [-1, 0],    # left
         ])
 
         direction = [1, -1, 2, -2]
@@ -70,11 +70,11 @@ class TriangularSites:
         def rashba(spin):
             if spin:    # spin up
                 return [    # TODO(keyehz): calculate this
-                    "", "", "", ""
+                        "", "", "", ""
                 ]
             else:
                 return [    # TODO(keyehz): calculate this
-                    "", "", "", ""
+                        "", "", "", ""
                 ]
 
 
@@ -84,9 +84,9 @@ class GrapheneSites:
 
     class A:
         delta = np.array([
-            [0, 1],    # up right
-            [-1, 1],    # down right
-            [0, -1],    # left
+                [0, 1],    # up right
+                [-1, 1],    # down right
+                [0, -1],    # left
         ])
 
         direction = [1, 2, 3]
@@ -98,20 +98,20 @@ class GrapheneSites:
         def rashba(spin):
             if spin:    # spin up
                 return [
-                    "0.5 * rsoc * (-1.0 + comp * sqrt(3.0))",
-                    "0.5 * rsoc * (-1.0 - comp * sqrt(3.0))", "-rsoc"
+                        "0.5 * rsoc * (-1.0 + comp * sqrt(3.0))",
+                        "0.5 * rsoc * (-1.0 - comp * sqrt(3.0))", "-rsoc"
                 ]
             else:
                 return [
-                    "0.5 * rsoc * ( 1.0 + comp * sqrt(3.0))",
-                    "0.5 * rsoc * ( 1.0 - comp * sqrt(3.0))", "rsoc"
+                        "0.5 * rsoc * ( 1.0 + comp * sqrt(3.0))",
+                        "0.5 * rsoc * ( 1.0 - comp * sqrt(3.0))", "rsoc"
                 ]
 
     class B:
         delta = np.array([
-            [0, -1],    # down left
-            [1, -1],    # up left
-            [0, 1],    # right
+                [0, -1],    # down left
+                [1, -1],    # up left
+                [0, 1],    # right
         ])
 
         direction = [-1, -2, -3]
@@ -123,20 +123,20 @@ class GrapheneSites:
         def rashba(spin):
             if spin:
                 return [
-                    "0.5 * rsoc * ( 1.0 - comp * sqrt(3.0))",
-                    "0.5 * rsoc * ( 1.0 + comp * sqrt(3.0))", "rsoc"
+                        "0.5 * rsoc * ( 1.0 - comp * sqrt(3.0))",
+                        "0.5 * rsoc * ( 1.0 + comp * sqrt(3.0))", "rsoc"
                 ]
             else:
                 return [
-                    "0.5 * rsoc * (-1.0 - comp * sqrt(3.0))",
-                    "0.5 * rsoc * (-1.0 + comp * sqrt(3.0))", "-rsoc"
+                        "0.5 * rsoc * (-1.0 - comp * sqrt(3.0))",
+                        "0.5 * rsoc * (-1.0 + comp * sqrt(3.0))", "-rsoc"
                 ]
 
     class C:
         delta = np.array([
-            [1, 1],    # up right
-            [0, 1],    # down right
-            [0, -1],    # left
+                [1, 1],    # up right
+                [0, 1],    # down right
+                [0, -1],    # left
         ])
 
         direction = [1, 2, 3]
@@ -148,20 +148,20 @@ class GrapheneSites:
         def rashba(spin):
             if spin:    # spin up
                 return [
-                    "0.5 * rsoc * (-1.0 + comp * sqrt(3.0))",
-                    "0.5 * rsoc * (-1.0 - comp * sqrt(3.0))", "-rsoc"
+                        "0.5 * rsoc * (-1.0 + comp * sqrt(3.0))",
+                        "0.5 * rsoc * (-1.0 - comp * sqrt(3.0))", "-rsoc"
                 ]
             else:
                 return [
-                    "0.5 * rsoc * ( 1.0 + comp * sqrt(3.0))",
-                    "0.5 * rsoc * ( 1.0 - comp * sqrt(3.0))", "rsoc"
+                        "0.5 * rsoc * ( 1.0 + comp * sqrt(3.0))",
+                        "0.5 * rsoc * ( 1.0 - comp * sqrt(3.0))", "rsoc"
                 ]
 
     class D:
         delta = np.array([
-            [-1, -1],    # down left
-            [0, -1],    # up left
-            [0, 1],    # right
+                [-1, -1],    # down left
+                [0, -1],    # up left
+                [0, 1],    # right
         ])
 
         direction = [-1, -2, -3]
@@ -173,13 +173,13 @@ class GrapheneSites:
         def rashba(spin):
             if spin:
                 return [
-                    "0.5 * rsoc * ( 1.0 - comp * sqrt(3.0))",
-                    "0.5 * rsoc * ( 1.0 + comp * sqrt(3.0))", "rsoc"
+                        "0.5 * rsoc * ( 1.0 - comp * sqrt(3.0))",
+                        "0.5 * rsoc * ( 1.0 + comp * sqrt(3.0))", "rsoc"
                 ]
             else:
                 return [
-                    "0.5 * rsoc * (-1.0 - comp * sqrt(3.0))",
-                    "0.5 * rsoc * (-1.0 + comp * sqrt(3.0))", "-rsoc"
+                        "0.5 * rsoc * (-1.0 - comp * sqrt(3.0))",
+                        "0.5 * rsoc * (-1.0 + comp * sqrt(3.0))", "-rsoc"
                 ]
 
 
@@ -208,7 +208,7 @@ class Graphene:
 
     def convert_coordinates(self, coordinate_in_grid: np.array) -> int:
         return coordinate_in_grid[
-            0] * self.dy * self.orbitals + coordinate_in_grid[1]
+                0] * self.dy * self.orbitals + coordinate_in_grid[1]
 
     def is_removed(self, pair_coords: list) -> bool:
         return any(coord in self.sites_removed for coord in pair_coords)

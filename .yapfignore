@@ -1,0 +1,4 @@
+.git/
+tightb/__pycache__/
+test/__pycache__/
+env/
