@@ -346,7 +346,7 @@ class reflection_vertical_axis(unittest.TestCase):
         boundary = tightb.symmetry.Boundary(xmin=-3.0, xmax=3.0)
         self.assertIsNone(
                 assert_allclose(
-                        tightb.symmetry.reflection_vertical_axis(
+                        tightb.symmetry.vertical_reflection_axis(
                                 lattice, boundary),
                         [[0.0, 0.0]]))    # Equal up to 1e-16
 
@@ -360,7 +360,7 @@ class reflection_vertical_axis(unittest.TestCase):
         boundary = tightb.symmetry.Boundary(xmin=-3.0, xmax=3.0)
         self.assertIsNone(
                 assert_allclose(
-                        tightb.symmetry.reflection_vertical_axis(
+                        tightb.symmetry.vertical_reflection_axis(
                                 lattice, boundary),
                         [[0.0, 0.0]]))    # Equal up to 1e-16
 
@@ -373,7 +373,7 @@ class reflection_vertical_axis(unittest.TestCase):
         ]
         boundary = tightb.symmetry.Boundary(xmin=-3.0, xmax=3.0)
         self.assertFalse(
-                tightb.symmetry.reflection_vertical_axis(
+                tightb.symmetry.vertical_reflection_axis(
                         lattice, boundary))    # Is empty
 
     def test_centered_assymetric_float(self):
@@ -385,8 +385,26 @@ class reflection_vertical_axis(unittest.TestCase):
         ]
         boundary = tightb.symmetry.Boundary(xmin=-3.0, xmax=3.0)
         self.assertFalse(
-                tightb.symmetry.reflection_vertical_axis(
+                tightb.symmetry.vertical_reflection_axis(
                         lattice, boundary))    # Is empty
+
+    def test_graphene(self):    # Graphene has a vertical axis
+        lattice = tightb.symmetry.graphene_lattice_real_coordinates(1, 1)
+        boundary = tightb.symmetry.boundary_from_lattice(lattice)
+        self.assertIsNone(
+                assert_allclose(
+                        tightb.symmetry.vertical_reflection_axis(
+                                lattice, boundary),
+                        [[1.0, 0.0]]))    # Equal up to 1e-16
+
+    def test_graphene2(self):
+        lattice = tightb.symmetry.graphene_lattice_real_coordinates(2, 2)
+        boundary = tightb.symmetry.boundary_from_lattice(lattice)
+        self.assertIsNone(
+                assert_allclose(
+                        tightb.symmetry.vertical_reflection_axis(
+                                lattice, boundary),
+                        [[2.5, 0.0]]))    # Equal up to 1e-16
 
 
 class reflection_horizontal_axis(unittest.TestCase):
@@ -400,7 +418,7 @@ class reflection_horizontal_axis(unittest.TestCase):
         boundary = tightb.symmetry.Boundary(ymin=-3.0, ymax=3.0)
         self.assertIsNone(
                 assert_allclose(
-                        tightb.symmetry.reflection_horizontal_axis(
+                        tightb.symmetry.horizontal_reflection_axis(
                                 lattice, boundary),
                         [[0.0, 0.0]]))    # Equal up to 1e-16
 
@@ -414,7 +432,7 @@ class reflection_horizontal_axis(unittest.TestCase):
         boundary = tightb.symmetry.Boundary(ymin=-3.0, ymax=3.0)
         self.assertIsNone(
                 assert_allclose(
-                        tightb.symmetry.reflection_horizontal_axis(
+                        tightb.symmetry.horizontal_reflection_axis(
                                 lattice, boundary),
                         [[0.0, 0.0]]))    # Equal up to 1e-16
 
@@ -427,7 +445,7 @@ class reflection_horizontal_axis(unittest.TestCase):
         ]
         boundary = tightb.symmetry.Boundary(ymin=-3.0, ymax=3.0)
         self.assertFalse(
-                tightb.symmetry.reflection_horizontal_axis(
+                tightb.symmetry.horizontal_reflection_axis(
                         lattice, boundary))    # Is empty
 
     def test_centered_assymetric_float(self):
@@ -439,5 +457,19 @@ class reflection_horizontal_axis(unittest.TestCase):
         ]
         boundary = tightb.symmetry.Boundary(ymin=-3.0, ymax=3.0)
         self.assertFalse(
-                tightb.symmetry.reflection_horizontal_axis(
+                tightb.symmetry.horizontal_reflection_axis(
+                        lattice, boundary))    # Is empty
+
+    def test_graphene(self):    # Graphene has no hotizontal reflection axis
+        lattice = tightb.symmetry.graphene_lattice_real_coordinates(1, 1)
+        boundary = tightb.symmetry.boundary_from_lattice(lattice)
+        self.assertFalse(
+                tightb.symmetry.horizontal_reflection_axis(
+                        lattice, boundary))    # Is empty
+
+    def test_graphene2(self):    # Graphene has no hotizontal reflection axis
+        lattice = tightb.symmetry.graphene_lattice_real_coordinates(2, 2)
+        boundary = tightb.symmetry.boundary_from_lattice(lattice)
+        self.assertFalse(
+                tightb.symmetry.horizontal_reflection_axis(
                         lattice, boundary))    # Is empty

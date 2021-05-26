@@ -79,6 +79,24 @@ class Boundary:
         return np.array([x, y])
 
 
+def boundary_from_lattice(lattice: list) -> Boundary:
+    xmin = 0.0
+    xmax = 0.0
+    ymin = 0.0
+    ymax = 0.0
+
+    for coordinate in lattice:
+        x, y = coordinate
+
+        xmin = min(xmin, x)
+        xmax = max(xmax, x)
+
+        ymin = min(ymin, x)
+        ymax = max(ymax, x)
+
+    return Boundary(xmin, xmax, ymin, ymax)
+
+
 # Now the more complicated cases where the axis is tilted by some angle alpha
 def reflect_point_by_tilted_axis(
         x0: np.array,
@@ -144,7 +162,7 @@ def is_symmetric_by_reflection(lattice: list, v: np.array,
     return np.allclose(lattice, reflected_lattice)
 
 
-def reflection_vertical_axis(lattice: list, boundary: Boundary) -> list:
+def vertical_reflection_axis(lattice: list, boundary: Boundary) -> list:
 
     N = 100    # TODO(keyezh): hardcoded, not sure if good enough
     dx = (boundary.xmax - boundary.xmin) / float(N)
@@ -161,7 +179,7 @@ def reflection_vertical_axis(lattice: list, boundary: Boundary) -> list:
     return reflection_axes
 
 
-def reflection_horizontal_axis(lattice: list, boundary: Boundary) -> list:
+def horizontal_reflection_axis(lattice: list, boundary: Boundary) -> list:
 
     N = 100    # TODO(keyezh): hardcoded, not sure if good enough
     dx = (boundary.ymax - boundary.ymin) / float(N)
