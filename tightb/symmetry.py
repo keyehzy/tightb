@@ -53,10 +53,37 @@ def reflect_point_by_horizontal_axis(x0: np.array, y_star: float) -> np.array:
     return np.array([x0[0], y_star - x0[1]])
 
 
+class Boundary:
+    def __init__(self, xmin=-1e16, xmax=1e16, ymin=-1e16, ymax=1e16):
+
+        assert xmax > xmin
+        assert ymax > ymin
+
+        self.xmin = xmin
+        self.xmax = xmax
+        self.ymin = ymin
+        self.ymax = ymax
+
+    def apply_boundary(self, x0: np.array) -> np.array:
+        x, y = x0
+        if x > self.xmax:
+            x -= (self.xmax - self.xmin)
+        elif x < self.xmin:
+            x += (self.xmax - self.xmin)
+
+        if y > self.ymax:
+            y -= (self.ymax - self.ymin)
+        elif y < self.ymin:
+            y += (self.ymax - self.ymin)
+
+        return np.array([x, y])
+
+
 # Now the more complicated cases where the axis is tilted by some angle alpha
 def reflect_point_by_tilted_axis(x0: np.array,
                                  v: np.array,
-                                 r_star: list = [0.0, 0.0]) -> np.array:
+                                 r_star: list = [0.0, 0.0],
+                                 boundary: Boundary = Boundary()) -> np.array:
     # Here we are using the parametric form of the line function
     #
     # x = x0 + v_x * t
@@ -78,10 +105,11 @@ def reflect_point_by_tilted_axis(x0: np.array,
     x0_ref = np.array([-x0_rot[0], x0_rot[1]])
 
     # Then rotate and translate back
-    return np.array([
-        r_star[0] + x0_ref[0] * np.cos(alpha) + x0_ref[1] * np.sin(alpha),
-        r_star[1] - x0_ref[0] * np.sin(alpha) + x0_ref[1] * np.cos(alpha)
-    ])
+    return boundary.apply_boundary(
+        np.array([
+            r_star[0] + x0_ref[0] * np.cos(alpha) + x0_ref[1] * np.sin(alpha),
+            r_star[1] - x0_ref[0] * np.sin(alpha) + x0_ref[1] * np.cos(alpha)
+        ]))
 
 
 def reflect_lattice_by_vertical_axis(lattice: list, x_star) -> list:

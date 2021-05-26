@@ -85,47 +85,99 @@ class reflect_point_by_horizontal_axis(unittest.TestCase):
 class reflect_point_by_tilted_axis(unittest.TestCase):
     def test_trivial(self):
         point = np.array([1.0, 1.0])
-        n = np.array([0.0, 1.0])
+        v = np.array([0.0, 1.0])
         self.assertIsNone(
             assert_allclose(
-                tightb.symmetry.reflect_point_by_tilted_axis(point, n),
+                tightb.symmetry.reflect_point_by_tilted_axis(x0=point, v=v),
                 np.array([-1.0, 1.0])))
 
     def test_tilted(self):
         point = np.array([1.0, 3.0])
-        n = np.array([1.0, 1.0])    # 45 deg
+        v = np.array([1.0, 1.0])    # 45 deg
         self.assertIsNone(
             assert_allclose(
-                tightb.symmetry.reflect_point_by_tilted_axis(point, n),
+                tightb.symmetry.reflect_point_by_tilted_axis(x0=point, v=v),
                 np.array([3.0, 1.0])))    # Equal up to 1e-16
 
     def test_tilted_translation_y(self):
         point = np.array([3.0, 1.0])
-        n = np.array([1.0, 1.0])    # 45 deg
+        v = np.array([1.0, 1.0])    # 45 deg
         axis = [1.0, 0.0]
         self.assertIsNone(
             assert_allclose(
-                tightb.symmetry.reflect_point_by_tilted_axis(point, n, axis),
+                tightb.symmetry.reflect_point_by_tilted_axis(x0=point, v=v,
+                    r_star=axis),
                 np.array([2.0, 2.0])))    # Equal up to 1e-16
 
     def test_tilted_translation_x(self):
         point = np.array([3.0, 1.0])
-        n = np.array([1.0, 1.0])    # 45 deg
+        v = np.array([1.0, 1.0])    # 45 deg
         axis = [0.0, 1.0]
         self.assertIsNone(
             assert_allclose(tightb.symmetry.reflect_point_by_tilted_axis(
-                point, n, axis),
+                x0=point, v=v, r_star=axis),
                             np.array([0.0, 4.0]),
                             atol=1e-15))    # Equal up to 1e-15
 
     def test_tilted_translation_xy(self):
         point = np.array([3.0, 1.0])
-        n = np.array([1.0, 1.0])    # 45 deg
+        v = np.array([1.0, 1.0])    # 45 deg
         axis = [1.0, 1.0]
         self.assertIsNone(
             assert_allclose(
-                tightb.symmetry.reflect_point_by_tilted_axis(point, n, axis),
+                tightb.symmetry.reflect_point_by_tilted_axis(x0=point, v=v,
+                    r_star=axis),
                 np.array([1.0, 3.0])))    # Equal up to 1e-16
+
+
+class reflect_point_by_tilted_axis_with_boundary(unittest.TestCase):
+    def test_trivial(self):
+        point = np.array([2.0, 2.0])
+        v = np.array([0.0, 1.0])
+        boundary = tightb.symmetry.Boundary()
+        self.assertIsNone(
+            assert_allclose(
+                tightb.symmetry.reflect_point_by_tilted_axis(
+                    x0=point, v=v, boundary=boundary), np.array([-2.0, 2.0])))
+
+    def test_axis_in_y(self):
+        point = np.array([2.0, 2.0])
+        v = np.array([0.0, 1.0])
+        boundary = tightb.symmetry.Boundary(xmin=-1.0, xmax=1.0)
+        self.assertIsNone(
+            assert_allclose(
+                tightb.symmetry.reflect_point_by_tilted_axis(
+                    x0=point, v=v, boundary=boundary), np.array([0.0, 2.0])))
+
+    def test_axis_in_x(self):
+        point = np.array([2.0, 2.0])
+        v = np.array([1.0, 0.0])
+        boundary = tightb.symmetry.Boundary(ymin=-1.0, ymax=1.0)
+        self.assertIsNone(
+            assert_allclose(tightb.symmetry.reflect_point_by_tilted_axis(
+                x0=point, v=v, boundary=boundary),
+                            np.array([2.0, 0.0]),
+                            atol=1e-15))
+
+    def test_axis_in_xy(self):
+        point = np.array([2.0, 2.0])
+        v = np.array([1.0, 1.0])
+        boundary = tightb.symmetry.Boundary(xmin=-1.0, xmax=1.0, ymin=-1.0, ymax=1.0)
+        self.assertIsNone(
+            assert_allclose(tightb.symmetry.reflect_point_by_tilted_axis(
+                x0=point, v=v, boundary=boundary),
+                            np.array([0.0, 0.0]),
+                            atol=1e-15))
+
+    def test_axis_in_x_assymetric(self):
+        point = np.array([1.0, 1.0])
+        v = np.array([0.0, 1.0])
+        boundary = tightb.symmetry.Boundary(xmin=0.0, xmax=2.0)
+        self.assertIsNone(
+            assert_allclose(tightb.symmetry.reflect_point_by_tilted_axis(
+                x0=point, v=v, boundary=boundary),
+                            np.array([1.0, 1.0]),
+                            atol=1e-15))
 
 
 class reflect_lattice(unittest.TestCase):
