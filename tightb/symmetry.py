@@ -146,13 +146,13 @@ def is_symmetric_by_reflection(lattice: list, v: np.array,
 
 def reflection_vertical_axis(lattice: list, boundary: Boundary) -> list:
 
-    N = 1000    # TODO(keyezh): hardcoded, not sure if good enough
+    N = 100    # TODO(keyezh): hardcoded, not sure if good enough
     dx = (boundary.xmax - boundary.xmin) / float(N)
 
     reflection_axes = []
     axis_direction = np.array([0.0, 1.0])    # parallel to y axis
 
-    for j in range(N):
+    for j in range(-N, N):
         r = np.array([j * dx, 0.0])
 
         if is_symmetric_by_reflection(lattice, axis_direction, r):
@@ -163,21 +163,16 @@ def reflection_vertical_axis(lattice: list, boundary: Boundary) -> list:
 
 def reflection_horizontal_axis(lattice: list, boundary: Boundary) -> list:
 
-    N = 1000    # TODO(keyezh): hardcoded, not sure if good enough
+    N = 100    # TODO(keyezh): hardcoded, not sure if good enough
     dx = (boundary.ymax - boundary.ymin) / float(N)
 
     reflection_axes = []
     axis_direction = np.array([1.0, 0.0])    # parallel to x axis
 
-    for j in range(N):
+    for j in range(-N, N):
         r = np.array([0.0, j * dx])
 
         if is_symmetric_by_reflection(lattice, axis_direction, r):
             reflection_axes.append(r)
 
     return reflection_axes
-
-
-class Lattice:
-    def __init__(self, coordinates):
-        self.coordinates = coordinates
