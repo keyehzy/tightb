@@ -333,3 +333,31 @@ class is_symmetric_by_reflection_in_y_axis(unittest.TestCase):
         self.assertTrue(
                 tightb.symmetry.is_symmetric_by_reflection(
                         lattice, np.array([1.0, 0.0]), np.array([0.0, 2.0])))
+
+
+class reflection_vertical_axis(unittest.TestCase):
+    def test_centered_symmetric(self):
+        lattice = [
+                np.array([-2.0, 0.0]),
+                np.array([-1.0, 0.0]),
+                np.array([1.0, 0.0]),
+                np.array([2.0, 0.0])
+        ]
+        boundary = tightb.symmetry.Boundary(xmin=-3.0, xmax=3.0)
+        self.assertIsNone(
+                assert_allclose(
+                        tightb.symmetry.reflection_vertical_axis(
+                                lattice, boundary),
+                        [[0.0, 0.0]]))    # Equal up to 1e-16
+
+    def test_centered_assymetric(self):
+        lattice = [
+                np.array([-2.0, 0.0]),
+                np.array([-1.5, 0.0]),
+                np.array([1.0, 0.0]),
+                np.array([2.5, 0.0])
+        ]
+        boundary = tightb.symmetry.Boundary(xmin=-3.0, xmax=3.0)
+        self.assertFalse(
+                tightb.symmetry.reflection_vertical_axis(
+                        lattice, boundary))    # Is empty

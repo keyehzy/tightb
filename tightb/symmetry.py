@@ -136,11 +136,29 @@ def reflect_lattice_by_axis(lattice: list, v: np.array, r_star: list) -> list:
     return reflected_lattice
 
 
-def is_symmetric_by_reflection(lattice, v: np.array, r_star: list) -> bool:
+def is_symmetric_by_reflection(lattice: list, v: np.array,
+                               r_star: list) -> bool:
     reflected_lattice = sorted(np.round(
             reflect_lattice_by_axis(lattice, v, r_star), 9),
                                key=lambda x: (x[0], x[1]))    # HACK(keyehz)
     return np.allclose(lattice, reflected_lattice)
+
+
+def reflection_vertical_axis(lattice: list, boundary: Boundary) -> list:
+
+    N = 1000    # TODO(keyezh): hardcoded, not sure if good enough
+    dx = (boundary.xmax - boundary.xmin) / float(N)
+
+    reflection_axes = []
+    axis_direction = np.array([0.0, 1.0])    # parallel to y axis
+
+    for j in range(N):
+        r = np.array([j * dx, 0.0])
+
+        if is_symmetric_by_reflection(lattice, axis_direction, r):
+            reflection_axes.append(r)
+
+    return reflection_axes
 
 
 class Lattice:
