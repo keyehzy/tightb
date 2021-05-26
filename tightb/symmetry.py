@@ -25,19 +25,26 @@ unitcell_sequence = np.array(
         [graphene_delta[0], -graphene_delta[2], graphene_delta[1]])
 
 
-def graphene_lattice_real_coordinates(
-        nx: int, ny: int) -> list:    # TODO(keyeh): include removed sites
+def graphene_lattice_real_coordinates(nx: int,
+                                      ny: int,
+                                      removed_sites: list = []) -> list:
     coordinates = []
+
+    def append_valid(indice, element):
+        if (indice not in removed_sites):
+            coordinates.append(element)
+
     for j in range(ny):
         x0 = np.array([0.0, j * np.sqrt(3.0)])
-        coordinates.append(np.array(x0 + [0., 0.]))
+        append_valid(4 * nx * j, np.array(x0 + [0., 0.]))
         for i in range(nx):
+            indice = 4 * i + 4 * nx * j
             for idx in range(3):
-                coordinates.append(x0 + unitcell_sequence[idx])
+                append_valid(indice + idx + 1, x0 + unitcell_sequence[idx])
                 x0 += unitcell_sequence[idx]
 
             if i < nx - 1:
-                coordinates.append(x0 - graphene_delta[2])
+                append_valid(indice + 4, x0 - graphene_delta[2])
 
             x0 -= graphene_delta[2]
 

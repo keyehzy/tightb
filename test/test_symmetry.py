@@ -31,6 +31,46 @@ class graphene_lattice_real_coordinates(unittest.TestCase):
                         np.array([[0.0, 0.0], [0.5, 0.8660254037844386],
                                   [1.5, 0.8660254037844386], [2.0, 0.0]])))
 
+    def test_onebyone_remove_first(self):
+        removed = [0]
+        coordinates = tightb.symmetry.graphene_lattice_real_coordinates(
+                1, 1, removed)
+        self.assertIsNone(
+                assert_allclose(
+                        coordinates,
+                        np.array([[0.5, 0.8660254037844386],
+                                  [1.5, 0.8660254037844386], [2.0, 0.0]])))
+
+    def test_onebyone_remove_second(self):
+        removed = [1]
+        coordinates = tightb.symmetry.graphene_lattice_real_coordinates(
+                1, 1, removed)
+        self.assertIsNone(
+                assert_allclose(
+                        coordinates,
+                        np.array([[0.0, 0.0], [1.5, 0.8660254037844386],
+                                  [2.0, 0.0]])))
+
+    def test_onebyone_remove_third(self):
+        removed = [2]
+        coordinates = tightb.symmetry.graphene_lattice_real_coordinates(
+                1, 1, removed)
+        self.assertIsNone(
+                assert_allclose(
+                        coordinates,
+                        np.array([[0.0, 0.0], [0.5, 0.8660254037844386],
+                                  [2.0, 0.0]])))
+
+    def test_onebyone_remove_forth(self):
+        removed = [3]
+        coordinates = tightb.symmetry.graphene_lattice_real_coordinates(
+                1, 1, removed)
+        self.assertIsNone(
+                assert_allclose(
+                        coordinates,
+                        np.array([[0.0, 0.0], [0.5, 0.8660254037844386],
+                                  [1.5, 0.8660254037844386]])))
+
     def test_twobytwo(self):
         coordinates = tightb.symmetry.graphene_lattice_real_coordinates(2, 2)
         self.assertIsNone(
