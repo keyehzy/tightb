@@ -24,6 +24,8 @@ graphene_delta = np.array([[0.5, 0.5 * np.sqrt(3.0)],
 unitcell_sequence = np.array(
         [graphene_delta[0], -graphene_delta[2], graphene_delta[1]])
 
+eps = 1e-15
+
 
 def graphene_lattice_real_coordinates(nx: int,
                                       ny: int,
@@ -63,13 +65,17 @@ def reflect_point_by_horizontal_axis(x0: np.array, y_star: float) -> np.array:
 class Boundary:
     def __init__(self, xmin=-1e16, xmax=1e16, ymin=-1e16, ymax=1e16):
 
-        assert xmax > xmin
-        assert ymax > ymin
+        assert xmax > xmin or (xmax == xmin == 0.0)
+        assert ymax > ymin or (ymax == ymin == 0.0)
 
         self.xmin = xmin
         self.xmax = xmax
         self.ymin = ymin
         self.ymax = ymax
+
+    def __str__(self):
+        return f"xmin = {self.xmin}, xmax = {self.xmax}, ymin = {self.ymin}," \
+                f"ymax =  {self.ymax}"
 
     def apply_boundary(self, x0: np.array) -> np.array:
         x, y = x0
@@ -86,7 +92,9 @@ class Boundary:
         return np.array([x, y])
 
 
-def boundary_from_lattice(lattice: list) -> Boundary:
+def boundary_from_lattice(lattice: list,
+                          offset_x: float = 0.0,
+                          offset_y: float = 0.0) -> Boundary:
     xmin = 0.0
     xmax = 0.0
     ymin = 0.0
@@ -98,10 +106,11 @@ def boundary_from_lattice(lattice: list) -> Boundary:
         xmin = min(xmin, x)
         xmax = max(xmax, x)
 
-        ymin = min(ymin, x)
-        ymax = max(ymax, x)
+        ymin = min(ymin, y)
+        ymax = max(ymax, y)
 
-    return Boundary(xmin, xmax, ymin, ymax)
+    return Boundary(xmin - (offset_x + eps), xmax + (offset_x + eps),
+                    ymin - (offset_y + eps), ymax + (offset_y + eps))
 
 
 # Now the more complicated cases where the axis is tilted by some angle alpha
@@ -154,50 +163,60 @@ def reflect_lattice_by_horizontal_axis(lattice: list, y_star) -> list:
     return reflected_lattice
 
 
-def reflect_lattice_by_axis(lattice: list, v: np.array, r_star: list) -> list:
+def reflect_lattice_by_axis(
+        lattice: list,
+        v: np.array,
+        r_star: list,
+        boundary: Boundary = Boundary()) -> list:
     reflected_lattice = []
     for site in lattice:
-        reflected_lattice.append(reflect_point_by_tilted_axis(site, v, r_star))
+        reflected_lattice.append(
+                reflect_point_by_tilted_axis(site, v, r_star, boundary))
     return reflected_lattice
 
 
-def is_symmetric_by_reflection(lattice: list, v: np.array,
-                               r_star: list) -> bool:
+def is_symmetric_by_reflection(
+        lattice: list,
+        v: np.array,
+        r_star: list,
+        boundary: Boundary = Boundary()) -> bool:
     reflected_lattice = sorted(np.round(
-            reflect_lattice_by_axis(lattice, v, r_star), 9),
+            reflect_lattice_by_axis(lattice, v, r_star, boundary), 9),
                                key=lambda x: (x[0], x[1]))    # HACK(keyehz)
     return np.allclose(lattice, reflected_lattice)
 
 
 def vertical_reflection_axis(lattice: list, boundary: Boundary) -> list:
-
-    N = 100    # TODO(keyezh): hardcoded, not sure if good enough
+    # TODO(keyezh): hardcoded, not sure if good enough but seems to pass all
+    # the test so far
+    N = 800
     dx = (boundary.xmax - boundary.xmin) / float(N)
 
     reflection_axes = []
     axis_direction = np.array([0.0, 1.0])    # parallel to y axis
 
-    for j in range(-N, N):
-        r = np.array([j * dx, 0.0])
+    for j in range(N + 1):
+        r = np.array([boundary.xmin + j * dx, 0.0])
 
-        if is_symmetric_by_reflection(lattice, axis_direction, r):
+        if is_symmetric_by_reflection(lattice, axis_direction, r, boundary):
             reflection_axes.append(r)
 
     return reflection_axes
 
 
 def horizontal_reflection_axis(lattice: list, boundary: Boundary) -> list:
-
-    N = 100    # TODO(keyezh): hardcoded, not sure if good enough
-    dx = (boundary.ymax - boundary.ymin) / float(N)
+    # TODO(keyezh): hardcoded, not sure if good enough but seems to pass all
+    # the test so far
+    N = 800
+    dy = (boundary.ymax - boundary.ymin) / float(N)
 
     reflection_axes = []
     axis_direction = np.array([1.0, 0.0])    # parallel to x axis
 
-    for j in range(-N, N):
-        r = np.array([0.0, j * dx])
+    for j in range(N + 1):
+        r = np.array([0.0, boundary.ymin + j * dy])
 
-        if is_symmetric_by_reflection(lattice, axis_direction, r):
+        if is_symmetric_by_reflection(lattice, axis_direction, r, boundary):
             reflection_axes.append(r)
 
     return reflection_axes
