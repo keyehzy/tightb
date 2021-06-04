@@ -220,3 +220,22 @@ def horizontal_reflection_axis(lattice: list, boundary: Boundary) -> list:
             reflection_axes.append(r)
 
     return reflection_axes
+
+
+def translate_point_in_direction_by_amount(
+        x0: np.array,
+        v: np.array,
+        amount: float,
+        boundary: Boundary = Boundary()) -> np.array:
+    return boundary.apply_boundary(x0 + amount * v)
+
+
+def is_symmetric_by_translation(
+        lattice: list,
+        v: np.array,
+        amount: float,
+        boundary: Boundary = Boundary()) -> bool:
+    translated_lattice = sorted(np.round(
+            reflect_lattice_by_axis(lattice, v, amount, boundary), 9),
+                                key=lambda x: (x[0], x[1]))    # HACK(keyehz)
+    return np.allclose(lattice, translated_lattice)

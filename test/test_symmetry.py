@@ -723,3 +723,25 @@ class reflection_horizontal_axis(unittest.TestCase):
         self.assertFalse(
                 tightb.symmetry.horizontal_reflection_axis(
                         lattice, boundary))    # Is empty
+
+
+class translation(unittest.TestCase):
+    def test_translation_simple(self):
+        x0 = np.array([0.0, 0.0])
+        v = np.array([1.0, 1.0])
+        self.assertIsNone(
+                assert_allclose(
+                        tightb.symmetry.translate_point_in_direction_by_amount(
+                                x0, v, 1.0), np.array([1.0, 1.0])))
+
+    def test_translation_with_boundary(self):
+        x0 = np.array([0.0, 0.0])
+        v = np.array([1.0, 1.0])
+        boundary = tightb.symmetry.Boundary(xmin=-1.0,
+                                            xmax=1.0,
+                                            ymin=-1.0,
+                                            ymax=1.0)
+        self.assertIsNone(
+                assert_allclose(
+                        tightb.symmetry.translate_point_in_direction_by_amount(
+                                x0, v, 2.0, boundary), np.array([0.0, 0.0])))
