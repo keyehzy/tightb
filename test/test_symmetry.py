@@ -726,7 +726,7 @@ class reflection_horizontal_axis(unittest.TestCase):
 
 
 class translation(unittest.TestCase):
-    def test_translation_simple(self):
+    def test_translate_point_in_direction_by_amount_simple(self):
         x0 = np.array([0.0, 0.0])
         v = np.array([1.0, 1.0])
         self.assertIsNone(
@@ -734,7 +734,7 @@ class translation(unittest.TestCase):
                         tightb.symmetry.translate_point_in_direction_by_amount(
                                 x0, v, 1.0), np.array([1.0, 1.0])))
 
-    def test_translation_with_boundary(self):
+    def test_translate_point_in_direction_by_amount_with_boundary(self):
         x0 = np.array([0.0, 0.0])
         v = np.array([1.0, 1.0])
         boundary = tightb.symmetry.Boundary(xmin=-1.0,
@@ -745,3 +745,33 @@ class translation(unittest.TestCase):
                 assert_allclose(
                         tightb.symmetry.translate_point_in_direction_by_amount(
                                 x0, v, 2.0, boundary), np.array([0.0, 0.0])))
+
+    def test_is_symmetric_by_translation_x(self):
+        lattice = np.array([[0.0, 0.0], [1.0, 0.0]])
+        v = np.array([1.0, 0.0])
+        amount = 1.0
+        boundary = tightb.symmetry.Boundary(xmin=0.0, xmax=2.0)
+        self.assertTrue(
+                tightb.symmetry.is_symmetric_by_translation(
+                        lattice, v, amount, boundary))    # Is empty
+
+    def test_is_symmetric_by_translation_y(self):
+        lattice = np.array([[0.0, 0.0], [0.0, 1.0]])
+        v = np.array([0.0, 1.0])
+        amount = 1.0
+        boundary = tightb.symmetry.Boundary(ymin=0.0, ymax=2.0)
+        self.assertTrue(
+                tightb.symmetry.is_symmetric_by_translation(
+                        lattice, v, amount, boundary))    # Is empty
+
+    def test_is_symmetric_by_translation_xy(self):
+        lattice = np.array([[0.0, 0.0], [1.0, 1.0]])
+        v = np.array([1.0, 1.0])
+        amount = 1.0
+        boundary = tightb.symmetry.Boundary(xmin=0.0,
+                                            xmax=2.0,
+                                            ymin=0.0,
+                                            ymax=2.0)
+        self.assertTrue(
+                tightb.symmetry.is_symmetric_by_translation(
+                        lattice, v, amount, boundary))    # Is empty

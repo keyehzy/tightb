@@ -79,12 +79,12 @@ class Boundary:
 
     def apply_boundary(self, x0: np.array) -> np.array:
         x, y = x0
-        if x > self.xmax:
+        if x >= self.xmax:
             x -= (self.xmax - self.xmin)
         elif x < self.xmin:
             x += (self.xmax - self.xmin)
 
-        if y > self.ymax:
+        if y >= self.ymax:
             y -= (self.ymax - self.ymin)
         elif y < self.ymin:
             y += (self.ymax - self.ymin)
@@ -230,12 +230,26 @@ def translate_point_in_direction_by_amount(
     return boundary.apply_boundary(x0 + amount * v)
 
 
+def translate_lattice_in_direction_by_amount(
+        lattice: list,
+        v: np.array,
+        amount: float,
+        boundary: Boundary = Boundary()) -> list:
+    translated_lattice = []
+    for site in lattice:
+        translated_lattice.append(
+                translate_point_in_direction_by_amount(site, v, amount,
+                                                       boundary))
+    return translated_lattice
+
+
 def is_symmetric_by_translation(
         lattice: list,
         v: np.array,
         amount: float,
         boundary: Boundary = Boundary()) -> bool:
     translated_lattice = sorted(np.round(
-            reflect_lattice_by_axis(lattice, v, amount, boundary), 9),
+            translate_lattice_in_direction_by_amount(lattice, v, amount,
+                                                     boundary), 9),
                                 key=lambda x: (x[0], x[1]))    # HACK(keyehz)
     return np.allclose(lattice, translated_lattice)
