@@ -749,29 +749,43 @@ class translation(unittest.TestCase):
     def test_is_symmetric_by_translation_x(self):
         lattice = np.array([[0.0, 0.0], [1.0, 0.0]])
         v = np.array([1.0, 0.0])
-        amount = 1.0
+        shift_amount = 1.0
         boundary = tightb.symmetry.Boundary(xmin=0.0, xmax=2.0)
         self.assertTrue(
                 tightb.symmetry.is_symmetric_by_translation(
-                        lattice, v, amount, boundary))    # Is empty
+                        lattice, v, shift_amount, boundary))    # Is empty
 
     def test_is_symmetric_by_translation_y(self):
         lattice = np.array([[0.0, 0.0], [0.0, 1.0]])
         v = np.array([0.0, 1.0])
-        amount = 1.0
+        shift_amount = 1.0
         boundary = tightb.symmetry.Boundary(ymin=0.0, ymax=2.0)
         self.assertTrue(
                 tightb.symmetry.is_symmetric_by_translation(
-                        lattice, v, amount, boundary))    # Is empty
+                        lattice, v, shift_amount, boundary))    # Is empty
 
     def test_is_symmetric_by_translation_xy(self):
         lattice = np.array([[0.0, 0.0], [1.0, 1.0]])
         v = np.array([1.0, 1.0])
-        amount = 1.0
+        shift_amount = 1.0
         boundary = tightb.symmetry.Boundary(xmin=0.0,
                                             xmax=2.0,
                                             ymin=0.0,
                                             ymax=2.0)
         self.assertTrue(
                 tightb.symmetry.is_symmetric_by_translation(
-                        lattice, v, amount, boundary))    # Is empty
+                        lattice, v, shift_amount, boundary))    # Is empty
+
+
+class glide_operation(unittest.TestCase):
+    def test_perform_glide_operation_on_point_on_axis_by_amount(self):
+        x0 = np.array([0.0, 1.0])
+        v = np.array([1.0, 0.0])
+        r_star = [0.0, 0.0]
+        shift_amount = 1.0
+        self.assertIsNone(
+                assert_allclose(
+                        tightb.symmetry.
+                        perform_glide_operation_on_point_by_axis_by_amount(
+                                x0, v, r_star, shift_amount),
+                        np.array([1.0, -1.0])))

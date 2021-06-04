@@ -225,20 +225,20 @@ def horizontal_reflection_axis(lattice: list, boundary: Boundary) -> list:
 def translate_point_in_direction_by_amount(
         x0: np.array,
         v: np.array,
-        amount: float,
+        shift_amount: float,
         boundary: Boundary = Boundary()) -> np.array:
-    return boundary.apply_boundary(x0 + amount * v)
+    return boundary.apply_boundary(x0 + shift_amount * v)
 
 
 def translate_lattice_in_direction_by_amount(
         lattice: list,
         v: np.array,
-        amount: float,
+        shift_amount: float,
         boundary: Boundary = Boundary()) -> list:
     translated_lattice = []
     for site in lattice:
         translated_lattice.append(
-                translate_point_in_direction_by_amount(site, v, amount,
+                translate_point_in_direction_by_amount(site, v, shift_amount,
                                                        boundary))
     return translated_lattice
 
@@ -246,10 +246,29 @@ def translate_lattice_in_direction_by_amount(
 def is_symmetric_by_translation(
         lattice: list,
         v: np.array,
-        amount: float,
+        shift_amount: float,
         boundary: Boundary = Boundary()) -> bool:
     translated_lattice = sorted(np.round(
-            translate_lattice_in_direction_by_amount(lattice, v, amount,
+            translate_lattice_in_direction_by_amount(lattice, v, shift_amount,
                                                      boundary), 9),
                                 key=lambda x: (x[0], x[1]))    # HACK(keyehz)
     return np.allclose(lattice, translated_lattice)
+
+
+def perform_glide_operation_on_point_by_axis_by_amount(
+        x0: np.array,
+        v: np.array,
+        r_star: list,
+        shift_amount: float,
+        boundary: Boundary = Boundary()) -> np.array:
+
+    # Reflect by axis
+    reflected_point = reflect_point_by_tilted_axis(x0, v, r_star, boundary)
+
+    # Then shift
+    translated_point = translate_point_in_direction_by_amount(
+            reflected_point, v, shift_amount, boundary)
+
+    # TODO(keyehzh): check if v is always the same (I think it is)
+
+    return translated_point
