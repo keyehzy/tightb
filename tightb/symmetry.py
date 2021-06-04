@@ -272,3 +272,60 @@ def perform_glide_operation_on_point_by_axis_by_amount(
     # TODO(keyehzh): check if v is always the same (I think it is)
 
     return translated_point
+
+
+def is_symmetric_by_glide(
+        lattice: list,
+        v: np.array,
+        r_star: list,
+        shift_amount: float,
+        boundary: Boundary = Boundary()) -> bool:
+    reflected_lattice = reflect_lattice_by_axis(lattice, v, r_star, boundary)
+    glide_lattice = sorted(np.round(
+            translate_lattice_in_direction_by_amount(reflected_lattice, v,
+                                                     shift_amount, boundary),
+            9),
+                           key=lambda x: (x[0], x[1]))    # HACK(keyehz)
+    return np.allclose(lattice, glide_lattice)
+
+
+def vertical_glide_axis(lattice: list, boundary: Boundary) -> list:
+    # TODO(keyezh): hardcoded, not sure if good enough but seems to pass all
+    # the test so far
+    N = 100
+    dx = (boundary.xmax - boundary.xmin) / float(N)
+    dy = (boundary.ymax - boundary.ymin) / float(N)
+
+    glide_axes = []
+    axis_direction = np.array([0.0, 1.0])    # parallel to y axis
+    sorted_lattice = sorted(np.round(lattice, 9), key=lambda x: (x[0], x[1]))
+
+    for j in range(N + 1):
+        r = np.array([boundary.xmin + j * dx, 0.0])
+        for k in range(N + 1):
+            shift_amount = boundary.ymin + k * dy
+            if is_symmetric_by_glide(sorted_lattice, axis_direction, r,
+                                     shift_amount, boundary):
+                glide_axes.append(r)
+    return glide_axes
+
+
+def horizontal_glide_axis(lattice: list, boundary: Boundary) -> list:
+    # TODO(keyezh): hardcoded, not sure if good enough but seems to pass all
+    # the test so far
+    N = 100
+    dy = (boundary.ymax - boundary.ymin) / float(N)
+    dx = (boundary.xmax - boundary.xmin) / float(N)
+
+    glide_axes = []
+    axis_direction = np.array([1.0, 0.0])    # parallel to x axis
+    sorted_lattice = sorted(np.round(lattice, 9), key=lambda x: (x[0], x[1]))
+
+    for j in range(N + 1):
+        r = np.array([0.0, boundary.ymin + j * dy])
+        for k in range(N + 1):
+            shift_amount = boundary.xmin + k * dx
+            if is_symmetric_by_glide(sorted_lattice, axis_direction, r,
+                                     shift_amount, boundary):
+                glide_axes.append(r)
+    return glide_axes

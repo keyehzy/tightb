@@ -776,6 +776,18 @@ class translation(unittest.TestCase):
                 tightb.symmetry.is_symmetric_by_translation(
                         lattice, v, shift_amount, boundary))    # Is empty
 
+    def test_perform_glide_operation_on_point_by_axis_by_amount(self):
+        x0 = np.array([1.0, 0.0])
+        v = np.array([0.0, 1.0])
+        r_star = [0.0, 0.0]
+        shift_amount = 1.0
+        self.assertIsNone(
+                assert_allclose(
+                        tightb.symmetry.
+                        perform_glide_operation_on_point_by_axis_by_amount(
+                                x0, v, r_star, shift_amount),
+                        np.array([-1.0, 1.0])))
+
 
 class glide_operation(unittest.TestCase):
     def test_perform_glide_operation_on_point_on_axis_by_amount(self):
@@ -789,3 +801,58 @@ class glide_operation(unittest.TestCase):
                         perform_glide_operation_on_point_by_axis_by_amount(
                                 x0, v, r_star, shift_amount),
                         np.array([1.0, -1.0])))
+
+    def test_perform_glide_operation_on_point_by_axis_by_amount_1(self):
+        x0 = np.array([1.0, 0.0])
+        v = np.array([0.0, 1.0])
+        r_star = [0.0, 0.0]
+        shift_amount = 1.0
+        boundary = tightb.symmetry.Boundary(xmin=-2.0,
+                                            xmax=2.0,
+                                            ymin=-2.0,
+                                            ymax=2.0)
+        self.assertIsNone(
+                assert_allclose(
+                        tightb.symmetry.
+                        perform_glide_operation_on_point_by_axis_by_amount(
+                                x0, v, r_star, shift_amount, boundary),
+                        np.array([-1.0, 1.0])))
+
+    def test_perform_glide_operation_on_point_by_axis_by_amount_2(self):
+        x0 = np.array([-1.0, 1.0])
+        v = np.array([0.0, 1.0])
+        r_star = [0.0, 0.0]
+        shift_amount = 1.0
+        boundary = tightb.symmetry.Boundary(xmin=-1.5,
+                                            xmax=1.5,
+                                            ymin=-0.5,
+                                            ymax=1.5)
+        self.assertIsNone(
+                assert_allclose(
+                        tightb.symmetry.
+                        perform_glide_operation_on_point_by_axis_by_amount(
+                                x0, v, r_star, shift_amount, boundary),
+                        np.array([1.0, 0.0])))
+
+    def test_vertical_glide_axis(self):
+        lattice = np.array([[-1.0, 1.0], [1.0, 0.0]])
+        boundary = tightb.symmetry.Boundary(xmin=-1.5,
+                                            xmax=1.5,
+                                            ymin=-0.5,
+                                            ymax=1.5)
+        self.assertIsNone(
+                assert_allclose(
+                        tightb.symmetry.vertical_glide_axis(lattice, boundary),
+                        [[-1.5, 0.0], [0.0, 0.0], [1.5, 0.0]]))
+
+    def test_horizontal_glide_axis(self):
+        lattice = np.array([[0.0, 1.0], [1.0, -1.0]])
+        boundary = tightb.symmetry.Boundary(xmin=-0.5,
+                                            xmax=1.5,
+                                            ymin=-1.5,
+                                            ymax=1.5)
+        self.assertIsNone(
+                assert_allclose(
+                        tightb.symmetry.horizontal_glide_axis(
+                                lattice, boundary),
+                        [[0.0, -1.5], [0.0, 0.0], [0.0, 1.5]]))

@@ -25,6 +25,6 @@ run:
 	$(PYTHON) tightb.py
 
 test:
-	$(PYTHON) -m unittest $(tests)
+	$(PYTHON) -m unittest -f $(tests)
 
 .PHONY: run test
